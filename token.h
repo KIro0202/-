@@ -30,7 +30,8 @@ typedef struct TOKEN_STRUCT
     TOKEN_RPAREN,
 
     // данные
-    TOKEN_NUMBER,
+    TOKEN_DIGITS,
+    TOKEN_ADDRESS,
 
     // адреса/области
     TOKEN_I,
@@ -49,7 +50,7 @@ typedef struct TOKEN_STRUCT
     TOKEN_EOF
 } TokenType;
 
-    int value;
+    int value, bit_offset, byte_offset;
 } token_T;
 
 token_T* init_token(int type, char* value);
