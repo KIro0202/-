@@ -4,9 +4,9 @@
 #include <string.h>
 #include "token.h"
 
-// насрано зато руками сам всё сделал
+// плохо зато руками сам всё сделал
 
-char text[] = "L 50 T 20 +I 0.0 O 2.0 I 20.a";
+char text[] = "L  1a.3  50 T 20 +I 0.0 O 2.0 I  \" ";
 char delimiter[] = ".";
 char *endptr;
 int error_code = 0;
@@ -17,8 +17,10 @@ int main()
     int k = 0;
 
     char literal_buffer[60];
-
+    char* left;
+    char* right;
     char lex;
+
 
     token_T tokens[100] = {0};
 
@@ -90,6 +92,11 @@ int main()
                 i++;
                 break;
             }
+         case '"':
+            tokens[i].TokenType = TOKEN_QUOTE;
+            i++;
+            j++;
+            break;
 
         default:
             if (isalnum(lex))
@@ -101,11 +108,17 @@ int main()
 
                 literal_buffer[k] = '\0';
                 if (strchr(literal_buffer, '.'))
-                {
+                {    
                     tokens[i].TokenType = TOKEN_ADDRESS;
-                    tokens[i].byte_offset = atoi(strtok(literal_buffer, delimiter));
-                    tokens[i].bit_offset = atoi(strtok(NULL, delimiter));
+                    tochkenyzer(literal_buffer, &left, &right);
+                    if (strchecker(left) && strchecker(right))
+                    {
+                    tokens[i].byte_offset = atoi(left);
+                    tokens[i].bit_offset = atoi(right);
                     i++;
+                    free(left); free(right);
+                    }
+                    else {tokens[i].TokenType = TOKEN_UNKNOWN; i++;}
                 }
                 else if (isdigit(literal_buffer[0]))
                 {
@@ -122,6 +135,7 @@ int main()
         }
     }
     print_tokens(tokens, 20);
+
 }
 
 // начиная отсюда идёт нейрокал для дебага
@@ -192,6 +206,8 @@ const char *token_type_to_string(int type)
         return "TOKEN_DOT";
     case TOKEN_COMMA:
         return "TOKEN_COMMA";
+    case TOKEN_QUOTE:
+        return "TOKEN_QUOTE";
 
     case TOKEN_EOF:
         return "TOKEN_EOF";
@@ -231,4 +247,34 @@ void print_tokens(token_T tokens[], int count)
 
 void error_hanndler(error_code, i)
 {
+}
+
+
+
+
+//strtok подвёл
+void tochkenyzer (char *str, char** left_p, char** right_p){
+char *p = strchr(str, '.');
+int left_len = (p - str);
+*left_p = malloc (left_len + 1);
+int right_len = strlen(p + 1);
+*right_p = malloc(right_len + 1);
+
+
+
+strncpy(*left_p, str, left_len);
+strncpy(*right_p, p+1, right_len);
+(*left_p)[left_len] = '\0';
+(*right_p)[right_len] = '\0';
+
+}
+
+int strchecker(char *a){
+    {
+    while (*a) {
+        if (isdigit(*a++) == 0) return 0;
+    }
+
+    return 1;
+}
 }
