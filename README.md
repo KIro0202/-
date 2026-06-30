@@ -1,0 +1,2 @@
+<img width="637" height="654" alt="AST" src="https://github.com/user-attachments/assets/71eff7dd-7a77-47c1-b658-5f2034e9261f" />
+Пробуем, пытаемся сделать парсер 
